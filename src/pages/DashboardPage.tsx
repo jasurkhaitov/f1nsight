@@ -1,56 +1,54 @@
-import { CircleDollarSign, TrendingUp, Wallet } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+
+import Chat from '@/components/chat/Chat'
+import Dashboard from '@/components/dashboard/Dashboard'
 
 export default function DashboardPage() {
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
 	return (
-		<section className='min-h-screen py-10 px-4 sm:px-6 lg:px-8'>
-			<div className='max-w-7xl mx-auto'>
-				<h1 className='text-3xl font-bold mb-8 bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
-					Dashboard
-				</h1>
+		<div className='h-screen w-screen flex overflow-hidden'>
+			<Button
+				onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+				variant='outline'
+				size='icon'
+				className='lg:hidden fixed top-4 left-4 z-50'
+			>
+				{isSidebarOpen ? (
+					<X className='w-6 h-6' />
+				) : (
+					<Menu className='w-6 h-6' />
+				)}
+			</Button>
 
-				<div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-					<Card className='bg-card/80 backdrop-blur-sm border'>
-						<CardHeader className='flex flex-row items-center justify-between pb-2'>
-							<CardTitle className='text-sm font-medium text-muted-foreground'>
-								Today's Spending
-							</CardTitle>
-							<Wallet className='h-5 w-5 text-blue-500' />
-						</CardHeader>
-						<CardContent>
-							<p className='text-2xl font-bold'>$42.35</p>
-							<p className='text-xs text-muted-foreground'>↑ 12% from yesterday</p>
-						</CardContent>
-					</Card>
-
-					<Card className='bg-card/80 backdrop-blur-sm border'>
-						<CardHeader className='flex flex-row items-center justify-between pb-2'>
-							<CardTitle className='text-sm font-medium text-muted-foreground'>
-								Total Balance
-							</CardTitle>
-							<CircleDollarSign className='h-5 w-5 text-green-500' />
-						</CardHeader>
-						<CardContent>
-							<p className='text-2xl font-bold'>$3,245.90</p>
-							<p className='text-xs text-muted-foreground'>Updated just now</p>
-						</CardContent>
-					</Card>
-
-					<Card className='bg-card/80 backdrop-blur-sm border'>
-						<CardHeader className='flex flex-row items-center justify-between pb-2'>
-							<CardTitle className='text-sm font-medium text-muted-foreground'>
-								AI Insights
-							</CardTitle>
-							<TrendingUp className='h-5 w-5 text-purple-500' />
-						</CardHeader>
-						<CardContent>
-							<p className='text-sm text-muted-foreground'>
-								Your food expenses are trending up 18% this week. Try setting a daily limit of $25.
-							</p>
-						</CardContent>
-					</Card>
-				</div>
+			<div
+				className={`
+          fixed lg:relative inset-y-0 left-0 z-40
+          w-full sm:w-80 lg:w-[30%]
+          transform transition-transform duration-300 ease-in-out
+          ${
+						isSidebarOpen
+							? 'translate-x-0'
+							: '-translate-x-full lg:translate-x-0'
+					}
+          border-r bg-card
+        `}
+			>
+				<Chat />
 			</div>
-		</section>
+
+			{isSidebarOpen && (
+				<div
+					className='lg:hidden fixed inset-0 bg-black/50 z-30'
+					onClick={() => setIsSidebarOpen(false)}
+				></div>
+			)}
+
+			<div className='flex-1 overflow-hidden bg-background'>
+				<Dashboard />
+			</div>
+		</div>
 	)
 }

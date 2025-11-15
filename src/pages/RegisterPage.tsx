@@ -7,21 +7,23 @@ import {
 	CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import Login from '@/components/auth/Login'
+import RegisterForm from '@/components/auth/Register'
 
-export default function LoginPage() {
+export default function RegisterPage() {
 	const navigate = useNavigate()
 
 	return (
 		<div className='flex items-center min-h-screen justify-center px-4 py-12'>
 			<div className='w-full max-w-md'>
-				<Card className='border bg-transparent rounded-sm shadow-lg'>
+				<Card className='border shadow-lg rounded-sm bg-transparent'>
 					<CardHeader className='space-y-1 text-center'>
-						<CardTitle className='text-2xl font-bold'>Welcome back</CardTitle>
+						<CardTitle className='text-2xl font-bold'>
+							Create an account
+						</CardTitle>
 						<CardDescription></CardDescription>
 					</CardHeader>
 					<CardContent>
-						<Login />
+						<RegisterForm />
 						<Button
 							variant='outline'
 							onClick={() => navigate('/')}
