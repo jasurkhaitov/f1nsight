@@ -35,7 +35,7 @@ export default function DashboardPage() {
 				></div>
 			)}
 
-			<div className='flex-1 relative overflow-hidden pt-16 overflow-y-scroll chat bg-background'>
+			<div className='flex-1 relative bg-background overflow-y-scroll chat'>
 				<DashboardNavbar setIsSidebarOpen={setIsSidebarOpen} />
 
 				<Dashboard />
