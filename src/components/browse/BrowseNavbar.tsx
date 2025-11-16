@@ -19,14 +19,14 @@ export default function BrowseNavbar() {
 						>
 							Login
 						</Button>
-						
+
 						<Button
 							className='hidden sm:block'
 							onClick={() => navigate('/register')}
 						>
 							Register
 						</Button>
-						
+
 						<ModeToggle />
 					</div>
 				</div>

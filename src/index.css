@@ -129,3 +129,15 @@
 		@apply cursor-pointer;
 	}
 }
+
+.chat::-webkit-scrollbar {
+	height: 2px;
+	width: 2px;
+}
+.chat::-webkit-scrollbar-track {
+	background: transparent;
+}
+.chat::-webkit-scrollbar-thumb {
+	background-color: rgba(100, 100, 100, 0.3);
+	border-radius: 6px;
+}
