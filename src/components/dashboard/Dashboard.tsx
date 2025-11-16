@@ -1,5 +1,9 @@
+import CheckUpload from './CheckUpload'
+
 export default function Dashboard() {
 	return (
-		<div></div>
+		<div className='px-4'>
+			<CheckUpload />
+		</div>
 	)
 }
