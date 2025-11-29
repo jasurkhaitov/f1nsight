@@ -6,10 +6,10 @@ import {
 	SheetTitle,
 } from '@/components/ui/sheet'
 import { closeSheet, clearCurrentCheque } from '@/store/chequeSlice'
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { FileText, Calendar, DollarSign, Building } from 'lucide-react'
+import { Calendar, Building, CheckCircle2, Tag, HandCoins } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/store/hook'
+import notFound from '@/assets/notFound.png'
 
 export default function ChequeResultSheet() {
 	const dispatch = useAppDispatch()
@@ -24,131 +24,140 @@ export default function ChequeResultSheet() {
 
 	if (!currentCheque) return null
 
+	const isInvalidCheque =
+		(!currentCheque.merchantName || currentCheque.merchantName.trim() === '') &&
+		(!currentCheque.items || currentCheque.items.length === 0) &&
+		currentCheque.totalAmount === 0
+
 	console.log(currentCheque)
+
+	if (isInvalidCheque) {
+		return (
+			<Sheet open={isSheetOpen} onOpenChange={handleClose}>
+				<SheetContent className='w-full sm:max-w-xl flex items-center justify-center'>
+					<div className='text-center'>
+						<img
+							src={notFound}
+							className='m-auto'
+							alt='Not Found Image for Check'
+						/>
+						<p className='text-xl font-semibold mt-10 mb-2'>
+							Cheque is not valid
+						</p>
+						<p className='text-muted-foreground'>
+							The system could not recognize your cheque. Please try again.
+						</p>
+					</div>
+				</SheetContent>
+			</Sheet>
+		)
+	}
 
 	return (
 		<Sheet open={isSheetOpen} onOpenChange={handleClose}>
 			<SheetContent className='w-full sm:max-w-xl overflow-y-auto'>
-				<SheetHeader>
-					<SheetTitle className='text-2xl'>Cheque Details</SheetTitle>
-					<SheetDescription>
-						Extracted information from the uploaded cheque
-					</SheetDescription>
+				<SheetHeader className='space-y-4 pb-6 border-b'>
+					<div className='flex items-center gap-3'>
+						<CheckCircle2 className='w-8 h-8 text-green-500' />
+
+						<SheetTitle className='text-2xl'>Cheque Details</SheetTitle>
+						<SheetDescription></SheetDescription>
+					</div>
 				</SheetHeader>
 
-				<div className='mt-6 space-y-6'>
-					{/* File Info */}
-					<div className='rounded-lg border p-4 bg-muted/30'>
-						<div className='flex items-start gap-3'>
-							<FileText className='w-5 h-5 text-muted-foreground mt-0.5' />
-							<p className='text-sm font-medium mb-1'>File Information</p>
+				<div className='space-y-5 px-5'>
+					<div className='space-y-3'>
+						<div className='flex items-center gap-3 px-3'>
+							<Building className='w-5 h-5 text-muted-foreground' />
+
+							<p className='text-xl font-semibold'>
+								{currentCheque.merchantName}
+							</p>
+						</div>
+
+						<div className='flex items-center gap-3 px-3'>
+							<Calendar className='w-5 h-5 text-muted-foreground' />
+
+							<p className='text-lg font-medium'>{currentCheque.chequeDate}</p>
 						</div>
 					</div>
 
 					<Separator />
 
-					{/* Cheque Data */}
-					<div className='space-y-4'>
-						<h3 className='font-semibold text-lg'>Extracted Data</h3>
+					<div className='space-y-4 px-1'>
+						<h3 className='text-lg font-semibold flex items-center gap-2'>
+							<HandCoins className='w-5 h-5' />
+							Financial Details
+						</h3>
 
-						<div className='space-y-3'>
-							<DataRow
-								icon={<Building className='w-5 h-5' />}
-								label='Merchant Name'
-								value={currentCheque.merchantName}
-							/>
+						<div className='space-y-3 pl-8'>
+							{currentCheque.subtotal && (
+								<div className='flex items-baseline justify-between'>
+									<span className='text-muted-foreground'>Subtotal</span>
+									<span className='font-medium text-lg'>
+										{currentCheque.subtotal} UZS
+									</span>
+								</div>
+							)}
 
-							<DataRow
-								icon={<Calendar className='w-5 h-5' />}
-								label='Cheque Date'
-								value={currentCheque.chequeDate}
-							/>
+							<div className='flex items-baseline justify-between'>
+								<span className='text-muted-foreground'>Service Fee</span>
+								<span className='font-medium text-lg'>
+									{currentCheque.serviceFee
+										? `${currentCheque.serviceFee} UZS`
+										: 'No service fee'}
+								</span>
+							</div>
 
-							<DataRow
-								icon={<DollarSign className='w-5 h-5' />}
-								label='Subtotal'
-								value={`$${currentCheque.subtotal}`}
-							/>
+							<div className='flex items-baseline justify-between'>
+								<span className='text-muted-foreground'>Tax</span>
+								<span className='font-medium text-lg'>
+									{currentCheque.tax} UZS
+								</span>
+							</div>
 
-							<DataRow
-								icon={<DollarSign className='w-5 h-5' />}
-								label='Service Fee'
-								value={
-									currentCheque.serviceFee
-										? `$${currentCheque.serviceFee}`
-										: 'No service fee'
-								}
-							/>
+							<Separator className='my-3' />
 
-							<DataRow
-								icon={<DollarSign className='w-5 h-5' />}
-								label='Tax'
-								value={`$${currentCheque.tax}`}
-							/>
-
-							<DataRow
-								icon={<DollarSign className='w-5 h-5' />}
-								label='Total Amount'
-								value={`$${currentCheque.totalAmount}`}
-							/>
+							<div className='flex items-baseline justify-between'>
+								<span className='text-lg font-semibold'>Total Amount</span>
+								<span className='text-2xl font-bold text-green-600 dark:text-green-400'>
+									{currentCheque.totalAmount} UZS
+								</span>
+							</div>
 						</div>
 					</div>
 
 					<Separator />
 
-					{/* Items List */}
-					<div>
-						<h3 className='font-semibold text-lg mb-3'>Items</h3>
+					<div className='space-y-4 px-1'>
+						<h3 className='text-lg font-semibold flex items-center gap-2'>
+							<Tag className='w-5 h-5' />
+							Items ({currentCheque.items.length})
+						</h3>
 
-						<div className='space-y-3'>
+						<div className='space-y-4 pl-8'>
 							{currentCheque.items.map((item, idx) => (
-								<div
-									key={idx}
-									className='rounded-md border p-3 bg-card flex justify-between'
-								>
-									<div>
-										<p className='font-medium'>{item.productName}</p>
-										<p className='text-xs text-muted-foreground'>
-											{item.category}
-										</p>
+								<div key={idx} className='space-y-1'>
+									<div className='flex items-baseline justify-between gap-4'>
+										<span className='font-medium text-base'>
+											{item.productName}
+										</span>
+										<span className='font-semibold text-lg whitespace-nowrap'>
+											{item.price} UZS
+										</span>
 									</div>
-									<p className='font-semibold'>${item.price}</p>
+									<p className='text-sm text-muted-foreground'>
+										{item.category}
+									</p>
+									{idx < currentCheque.items.length - 1 && (
+										<Separator className='mt-3' />
+									)}
 								</div>
 							))}
 						</div>
 					</div>
-
-					<Separator />
-
-					{/* Actions */}
-					<div className='flex gap-3'>
-						<Button variant='outline' onClick={handleClose} className='flex-1'>
-							Close
-						</Button>
-						<Button className='flex-1'>Download Report</Button>
-					</div>
 				</div>
 			</SheetContent>
 		</Sheet>
-	)
-}
-
-function DataRow({
-	icon,
-	label,
-	value,
-}: {
-	icon: React.ReactNode
-	label: string
-	value: string
-}) {
-	return (
-		<div className='flex items-start gap-3 p-3 rounded-md border bg-card'>
-			<div className='text-muted-foreground mt-0.5'>{icon}</div>
-			<div className='flex-1 min-w-0'>
-				<p className='text-xs text-muted-foreground mb-1'>{label}</p>
-				<p className='font-medium break-all'>{value}</p>
-			</div>
-		</div>
 	)
 }

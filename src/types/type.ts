@@ -60,3 +60,15 @@ export type UploadCheckResponse = {
 export interface UploadCheckPayload {
 	file: File
 }
+
+export interface InsightData {
+	summary: string
+	topCategory: string
+	trend: string
+}
+
+export interface InsightResponse {
+	success: boolean
+	data: InsightData
+	timestamp: number
+}

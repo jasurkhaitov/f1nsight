@@ -9,6 +9,11 @@ export const msg: Message[] = [
 		content: 'Hi! Can you summarize my recent spending?',
 		timestamp: new Date(Date.now() - 3540000),
 	},
+	{
+		role: 'ai',
+		content: 'Hdsfgsdgdsfg dsghsdfg dfgdsf  dg fffffffg gfdg  dfgdgsdg oday?',
+		timestamp: new Date(Date.now() - 3600000),
+	},
 ]
 
 export interface Message {

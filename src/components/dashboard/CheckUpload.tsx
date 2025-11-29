@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { AlertCircle, Loader2 } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog'
+import { LifeLine } from 'react-loading-indicators'
 
 type FileUploadStatus = 'idle' | 'uploading' | 'error'
 
@@ -16,6 +18,7 @@ export default function CheckUpload({
 	const [file, setFile] = useState<File | null>(null)
 	const [status, setStatus] = useState<FileUploadStatus>('idle')
 	const [errorMessage, setErrorMessage] = useState('')
+	const [showModal, setShowModal] = useState(false)
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
 	const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
@@ -49,6 +52,7 @@ export default function CheckUpload({
 				setFile(droppedFile)
 				setErrorMessage('')
 				setStatus('idle')
+				setShowModal(true)
 			} else {
 				setStatus('error')
 			}
@@ -62,6 +66,7 @@ export default function CheckUpload({
 				setFile(selectedFile)
 				setErrorMessage('')
 				setStatus('idle')
+				setShowModal(true)
 			} else {
 				setStatus('error')
 			}
@@ -70,6 +75,7 @@ export default function CheckUpload({
 
 	const handleUpload = () => {
 		if (!file) return
+		setShowModal(false)
 		onUpload(file)
 	}
 
@@ -77,6 +83,7 @@ export default function CheckUpload({
 		setFile(null)
 		setStatus('idle')
 		setErrorMessage('')
+		setShowModal(false)
 		if (fileInputRef.current) {
 			fileInputRef.current.value = ''
 		}
@@ -95,7 +102,7 @@ export default function CheckUpload({
 			/>
 
 			{status === 'idle' || (status === 'error' && !file) ? (
-				<div className='grid md:grid-cols-2 gap-6'>
+				<div className='grid md:grid-cols-2 gap-4'>
 					<div
 						onDragEnter={handleDrag}
 						onDragLeave={handleDrag}
@@ -108,8 +115,8 @@ export default function CheckUpload({
 						<div className='space-y-3'>
 							<h3 className='text-2xl font-bold mb-3'>Drag & Drop</h3>
 							<p>Drop your cheque image here to upload</p>
-							<p className='text-sm text-slate-500'>Supported: PNG, JPG</p>
-							<p className='text-xs text-slate-400 mt-1'>Max size: 3 MB</p>
+							<p className='text-sm'>Supported: PNG, JPG</p>
+							<p className='text-xs mt-1'>Max size: 3 MB</p>
 						</div>
 					</div>
 
@@ -124,12 +131,14 @@ export default function CheckUpload({
 							>
 								Choose File
 							</Button>
-							<p className='text-sm text-slate-500'>Supported: PNG, JPG</p>
-							<p className='text-xs text-slate-400 mt-3'>Max size: 3MB</p>
+							<p className='text-sm'>Supported: PNG, JPG</p>
+							<p className='text-xs mt-3'>Max size: 3MB</p>
 						</div>
 					</div>
 				</div>
-			) : (
+			) : null}
+
+			{status === 'error' && file && (
 				<div className='rounded-md p-10 border text-center'>
 					<div className='space-y-6'>
 						<div className='flex justify-center'>
@@ -148,48 +157,62 @@ export default function CheckUpload({
 				</div>
 			)}
 
-			{file && status === 'idle' && (
-				<div className='mt-4 rounded-md p-8 border'>
-					<div className='space-y-4'>
-						<div className='flex items-start justify-between'>
-							<div>
-								<h3 className='text-sm mb-1'>Selected File</h3>
-								<p className='text-xl font-bold wrap-break-word'>{file.name}</p>
+			<Dialog open={showModal} onOpenChange={setShowModal}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Confirm Upload</DialogTitle>
+					</DialogHeader>
+					{file && (
+						<div className='space-y-4'>
+							<div className='flex items-start justify-between'>
+								<div>
+									<h3 className='text-sm mb-1'>Selected File</h3>
+									<p className='text-xl font-bold wrap-break-words'>
+										{file.name}
+									</p>
+								</div>
+							</div>
+							<div className='grid grid-cols-2 gap-4 text-sm pt-4 border-t'>
+								<div>
+									<p className='mb-1'>File Type</p>
+									<p className='font-semibold'>{file.type || 'Unknown'}</p>
+								</div>
+								<div>
+									<p className='mb-1'>File Size</p>
+									<p className='font-semibold'>
+										{file.size / 1024 > 1024
+											? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+											: `${(file.size / 1024).toFixed(2)} KB`}
+									</p>
+								</div>
+							</div>
+							<div className='flex gap-4 pt-4'>
+								<Button
+									variant={'outline'}
+									onClick={handleReset}
+									className='flex-1'
+								>
+									Cancel
+								</Button>
+								<Button onClick={handleUpload} className='flex-1'>
+									Upload Cheque
+								</Button>
 							</div>
 						</div>
-						<div className='grid grid-cols-2 gap-4 text-sm pt-4 border-t'>
-							<div>
-								<p className='mb-1'>File Type</p>
-								<p className='font-semibold'>{file.type || 'Unknown'}</p>
-							</div>
-							<div>
-								<p className='mb-1'>File Size</p>
-								<p className='font-semibold'>
-									{file.size / 1024 > 1024
-										? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
-										: `${(file.size / 1024).toFixed(2)} KB`}
-								</p>
-							</div>
-						</div>
-						<div className='flex gap-4 pt-4'>
-							<Button
-								variant={'outline'}
-								onClick={handleReset}
-								disabled={isUploading}
-							>
-								Cancel
-							</Button>
-							<Button onClick={handleUpload} disabled={isUploading}>
-								{isUploading ? (
-									<>
-										<Loader2 className='w-4 h-4 mr-2 animate-spin' />
-										Uploading...
-									</>
-								) : (
-									'Upload Cheque'
-								)}
-							</Button>
-						</div>
+					)}
+				</DialogContent>
+			</Dialog>
+
+			{isUploading && (
+				<div className='fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50'>
+					<div className='flex flex-col items-center space-y-4'>
+						<LifeLine
+							size='large'
+							color={['#32cd32', '#327fcd', '#cd32cd', '#cd8032']}
+						/>
+						<p className='text-3xl font-semibold text-white'>
+							Uploading cheque...
+						</p>
 					</div>
 				</div>
 			)}

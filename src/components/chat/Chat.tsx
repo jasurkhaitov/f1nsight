@@ -20,7 +20,7 @@ export default function Chat() {
 	}
 
 	return (
-		<div className='flex flex-col h-screen bg-background pt-0 lg:pt-16'>
+		<div className='flex flex-col pt-16 h-screen bg-background'>
 			<div className='flex-1 px-4 chat overflow-y-auto'>
 				<div className='max-w-4xl mx-auto space-y-4 py-6'>
 					{msg.length === 0 ? (
@@ -36,7 +36,7 @@ export default function Chat() {
 								}`}
 							>
 								<div
-									className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+									className={`w-8 h-8 hidden rounded-full xs:flex items-center justify-center shrink-0 ${
 										msg.role === 'user'
 											? 'bg-linear-to-br from-emerald-500 to-teal-600'
 											: 'bg-linear-to-br from-blue-500 to-purple-600'
