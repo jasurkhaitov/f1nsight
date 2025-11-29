@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, Loader } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Link, useNavigate } from 'react-router-dom'
 import type { LoginPayload } from '@/types/type'
 import { useLogin } from '@/hooks/useAuth'
+import { useAuth } from '@/context/AuthContext'
+import { toast } from 'sonner'
 
 export default function Login() {
 	const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -14,24 +16,28 @@ export default function Login() {
 		password: '',
 	})
 
+	const emptyInputs = Object.values(loginData).some(value => value === '')
+
 	const navigate = useNavigate()
-	const login = useLogin()
+	const loginMutation = useLogin()
+	const { login } = useAuth()
 
 	const handleLogin = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
-		console.log(loginData);
-		login.mutate(loginData, {
-			onSuccess: data => {
-				localStorage.setItem('token', data.token)
+		if (loginMutation.isPending) return
+
+		loginMutation.mutate(loginData, {
+			onSuccess: response => {
+				login(response.data.token, response.data.refreshToken)
+
+				toast.success('Welcome back !')
 				navigate('/dashboard')
 			},
 			onError: err => {
-				console.log(err.message)
+				toast.error(err.error.message)
 			},
 		})
-
-		
 	}
 
 	return (
@@ -41,6 +47,7 @@ export default function Login() {
 					<span className='text-red-500'>*</span>Email
 				</Label>
 				<Input
+					autoComplete='email'
 					id='email'
 					type='email'
 					placeholder='Enter your email'
@@ -56,6 +63,7 @@ export default function Login() {
 				</Label>
 				<div className='relative'>
 					<Input
+						autoComplete='current-password'
 						id='password'
 						type={showPassword ? 'text' : 'password'}
 						placeholder='Enter your password'
@@ -71,8 +79,9 @@ export default function Login() {
 						type='button'
 						variant='ghost'
 						size='sm'
-						className='absolute right-0 top-0 h-full px-3 py-2'
+						className='absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent'
 						onClick={() => setShowPassword(prev => !prev)}
+						aria-label={showPassword ? 'Hide password' : 'Show password'}
 					>
 						{showPassword ? (
 							<EyeOff className='h-4 w-4 text-muted-foreground' />
@@ -85,14 +94,18 @@ export default function Login() {
 
 			<Button
 				type='submit'
-				disabled={login.isPending}
-				className='w-full mt-1 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
+				disabled={loginMutation.isPending || emptyInputs}
+				className='w-full mt-1 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white disabled:cursor-not-allowed cursor-pointer'
 			>
-				{login.isPending ? 'Logging in...' : 'Login'}
+				{loginMutation.isPending ? (
+					<Loader className='animate-spin' />
+				) : (
+					'Login'
+				)}
 			</Button>
 
 			<p className='text-center text-sm text-muted-foreground'>
-				Already have an account?{' '}
+				Don't have an account?{' '}
 				<Link
 					to='/register'
 					className='text-primary hover:text-primary/80 font-medium transition-colors'

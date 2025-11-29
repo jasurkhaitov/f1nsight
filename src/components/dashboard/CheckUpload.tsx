@@ -1,10 +1,18 @@
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Loader2 } from 'lucide-react'
 
-type FileUploadStatus = 'idle' | 'uploading' | 'success' | 'error'
+type FileUploadStatus = 'idle' | 'uploading' | 'error'
 
-export default function CheckUpload() {
+interface CheckUploadProps {
+	onUpload: (file: File) => void
+	isUploading: boolean
+}
+
+export default function CheckUpload({
+	onUpload,
+	isUploading,
+}: CheckUploadProps) {
 	const [file, setFile] = useState<File | null>(null)
 	const [status, setStatus] = useState<FileUploadStatus>('idle')
 	const [errorMessage, setErrorMessage] = useState('')
@@ -16,20 +24,15 @@ export default function CheckUpload() {
 	}
 
 	const validateFile = (f: File) => {
-		const maxSize = 3 * 1024 * 1024 // 5MB
-		const allowedTypes = [
-			'application/pdf',
-			'image/jpeg',
-			'image/png',
-			'text/plain',
-		]
+		const maxSize = 3 * 1024 * 1024
+		const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png']
 
 		if (!allowedTypes.includes(f.type)) {
-			setErrorMessage('Please upload a PDF, image, or text file')
+			setErrorMessage('Please upload a JPG or PNG image')
 			return false
 		}
 		if (f.size > maxSize) {
-			setErrorMessage('File size must be less than 5MB')
+			setErrorMessage('File size must be less than 3MB')
 			return false
 		}
 		return true
@@ -65,12 +68,9 @@ export default function CheckUpload() {
 		}
 	}
 
-	const handleUpload = async () => {
+	const handleUpload = () => {
 		if (!file) return
-
-		setStatus('uploading')
-		await new Promise(resolve => setTimeout(resolve, 1500))
-		setStatus('success')
+		onUpload(file)
 	}
 
 	const handleReset = () => {
@@ -83,14 +83,15 @@ export default function CheckUpload() {
 	}
 
 	return (
-		<div className='w-full max-w-5xl mt-2'>
+		<div className='w-full'>
 			<input
 				ref={fileInputRef}
 				type='file'
 				onChange={handleInputChange}
 				className='hidden'
-				accept='.pdf,.jpg,.jpeg,.png,.txt'
+				accept='.jpg,.jpeg,.png'
 				aria-label='File upload input'
+				disabled={isUploading}
 			/>
 
 			{status === 'idle' || (status === 'error' && !file) ? (
@@ -100,12 +101,13 @@ export default function CheckUpload() {
 						onDragLeave={handleDrag}
 						onDragOver={handleDrag}
 						onDrop={handleDrop}
-						className={`rounded-md p-5 flex flex-col items-center justify-center text-center transition-all duration-300 border-2 border-dashed`}
+						className={`rounded-md p-5 flex flex-col items-center justify-center text-center transition-all duration-300 border-2 border-dashed ${
+							isUploading ? 'opacity-50 pointer-events-none' : ''
+						}`}
 					>
 						<div className='space-y-3'>
 							<h3 className='text-2xl font-bold mb-3'>Drag & Drop</h3>
-							<p>Drop your file here to upload</p>
-
+							<p>Drop your cheque image here to upload</p>
 							<p className='text-sm text-slate-500'>Supported: PNG, JPG</p>
 							<p className='text-xs text-slate-400 mt-1'>Max size: 3 MB</p>
 						</div>
@@ -114,17 +116,16 @@ export default function CheckUpload() {
 					<div className='rounded-md p-5 flex flex-col items-center justify-center text-center border-2'>
 						<div className='space-y-3'>
 							<h3 className='text-2xl font-bold mb-3'>Browse Files</h3>
-							<p className='mb-3'>Choose a file from your device</p>
+							<p className='mb-3'>Choose a cheque image from your device</p>
 							<Button
 								onClick={() => fileInputRef.current?.click()}
 								variant={'outline'}
+								disabled={isUploading}
 							>
 								Choose File
 							</Button>
-							<div className='pt-3'>
-								<p className='text-sm text-slate-500'>Supported: PNG, JPG</p>
-								<p className='text-xs text-slate-400 mt-3'>Max size: 5MB</p>
-							</div>
+							<p className='text-sm text-slate-500'>Supported: PNG, JPG</p>
+							<p className='text-xs text-slate-400 mt-3'>Max size: 3MB</p>
 						</div>
 					</div>
 				</div>
@@ -140,7 +141,9 @@ export default function CheckUpload() {
 							<h3 className='text-2xl font-bold mb-2'>Upload Failed</h3>
 							<p className='text-red-600 mb-6'>{errorMessage}</p>
 						</div>
-						<Button onClick={handleReset}>Try Again</Button>
+						<Button onClick={handleReset} disabled={isUploading}>
+							Try Again
+						</Button>
 					</div>
 				</div>
 			)}
@@ -169,10 +172,23 @@ export default function CheckUpload() {
 							</div>
 						</div>
 						<div className='flex gap-4 pt-4'>
-							<Button variant={'outline'} onClick={handleReset}>
+							<Button
+								variant={'outline'}
+								onClick={handleReset}
+								disabled={isUploading}
+							>
 								Cancel
 							</Button>
-							<Button onClick={handleUpload}>Upload File</Button>
+							<Button onClick={handleUpload} disabled={isUploading}>
+								{isUploading ? (
+									<>
+										<Loader2 className='w-4 h-4 mr-2 animate-spin' />
+										Uploading...
+									</>
+								) : (
+									'Upload Cheque'
+								)}
+							</Button>
 						</div>
 					</div>
 				</div>

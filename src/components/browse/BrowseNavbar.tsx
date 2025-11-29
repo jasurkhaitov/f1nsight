@@ -2,9 +2,19 @@ import { useNavigate } from 'react-router-dom'
 import LogoIcon from '../../shared/LogoIcon'
 import { Button } from '../ui/button'
 import { ModeToggle } from '@/shared/ThemeToggle'
+import { useAuth } from '@/context/AuthContext'
+import { toast } from 'sonner'
+import { LogOut } from 'lucide-react'
 
 export default function BrowseNavbar() {
 	const navigate = useNavigate()
+	const { logout, isAuthenticated } = useAuth()
+
+	const handleLogout = () => {
+		logout()
+		toast.success('Logged out successfully')
+		navigate('/login')
+	}
 
 	return (
 		<nav className='border-b bg-background backdrop-blur-md fixed w-full top-0 z-50'>
@@ -12,20 +22,28 @@ export default function BrowseNavbar() {
 				<div className='flex justify-between items-center h-16'>
 					<LogoIcon />
 					<div className='flex items-center space-x-0 sm:space-x-4'>
-						<Button
-							className='hidden sm:block'
-							onClick={() => navigate('/login')}
-							variant='outline'
-						>
-							Login
-						</Button>
+						{!isAuthenticated ? (
+							<>
+								<Button
+									className='hidden sm:block'
+									onClick={() => navigate('/login')}
+									variant='outline'
+								>
+									Login
+								</Button>
 
-						<Button
-							className='hidden sm:block'
-							onClick={() => navigate('/register')}
-						>
-							Register
-						</Button>
+								<Button
+									className='hidden sm:block'
+									onClick={() => navigate('/register')}
+								>
+									Register
+								</Button>
+							</>
+						) : (
+							<Button onClick={handleLogout} variant={'outline'} size={'icon'}>
+								<LogOut />
+							</Button>
+						)}
 
 						<ModeToggle />
 					</div>

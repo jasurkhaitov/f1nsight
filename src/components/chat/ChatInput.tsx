@@ -7,7 +7,7 @@ export default function ChatInput() {
 	const [active, setActive] = useState(false)
 
 	return (
-		<div className='border-t border-r bg-background sticky bottom-0 p-4 w-full'>
+		<div className='border-t border-r bg-background sticky bottom-0 p-4'>
 			<div className='flex items-center gap-2'>
 				<Button
 					variant='outline'

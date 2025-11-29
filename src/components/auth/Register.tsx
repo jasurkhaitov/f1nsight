@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Link, useNavigate } from 'react-router-dom'
 import type { RegisterPayload } from '@/types/type'
 import { useRegister } from '@/hooks/useAuth'
+import { toast } from 'sonner'
 
 export default function Register() {
 	const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -17,6 +18,8 @@ export default function Register() {
 		password: '',
 	})
 
+	const emptyInputs = Object.values(formData).some(value => value === '')
+
 	const navigate = useNavigate()
 	const registerMutation = useRegister()
 
@@ -25,11 +28,11 @@ export default function Register() {
 
 		registerMutation.mutate(formData, {
 			onSuccess: () => {
-				alert('Account created successfully!')
+				toast.success('Account created successfully ! ')
 				navigate('/login')
 			},
 			onError: err => {
-				console.log(err.message)
+				toast.error(err.error.message)
 			},
 		})
 	}
@@ -41,6 +44,7 @@ export default function Register() {
 					<span className='text-red-500'>*</span>Name
 				</Label>
 				<Input
+					autoComplete='off'
 					id='first_name'
 					type='text'
 					placeholder='Enter your name'
@@ -57,6 +61,7 @@ export default function Register() {
 					<span className='text-red-500'>*</span>Surname
 				</Label>
 				<Input
+					autoComplete='off'
 					id='last_name'
 					type='text'
 					placeholder='Enter your surname'
@@ -71,6 +76,7 @@ export default function Register() {
 					<span className='text-red-500'>*</span>Email
 				</Label>
 				<Input
+					autoComplete='off'
 					id='email'
 					type='email'
 					placeholder='Enter your email'
@@ -86,9 +92,10 @@ export default function Register() {
 				</Label>
 				<div className='relative'>
 					<Input
+						autoComplete='off'
 						id='password'
 						type={showPassword ? 'text' : 'password'}
-						placeholder='Create a password'
+						placeholder='Create a password (min. 8 characters)'
 						required
 						className='pr-10'
 						value={formData.password}
@@ -112,12 +119,15 @@ export default function Register() {
 						)}
 					</Button>
 				</div>
+				<p className='text-xs text-muted-foreground'>
+					Must include uppercase, lowercase, number, and special character
+				</p>
 			</div>
 
 			<Button
 				type='submit'
-				disabled={registerMutation.isPending}
-				className='w-full mt-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
+				disabled={registerMutation.isPending || emptyInputs}
+				className='w-full mt-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white disabled:cursor-not-allowed cursor-pointer'
 			>
 				{registerMutation.isPending ? 'Creating...' : 'Create Account'}
 			</Button>

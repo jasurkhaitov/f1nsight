@@ -13,7 +13,7 @@ export default function DashboardPage() {
 			<div
 				className={`
           fixed lg:relative inset-y-0 left-0 z-60
-          w-full sm:w-100 lg:w-[40%]
+          w-full sm:w-100 lg:w-[35%]
           transform transition-transform duration-300 ease-in-out
           ${
 						isSidebarOpen
@@ -35,7 +35,7 @@ export default function DashboardPage() {
 				></div>
 			)}
 
-			<div className='flex-1 relative bg-background overflow-y-scroll chat'>
+			<div className='flex-1 relative bg-background overflow-y-auto p-0 lg:pt-16 chat'>
 				<DashboardNavbar setIsSidebarOpen={setIsSidebarOpen} />
 
 				<Dashboard />

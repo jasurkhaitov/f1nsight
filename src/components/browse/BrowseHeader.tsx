@@ -3,9 +3,11 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/context/AuthContext'
 
 export default function BrowseHeader() {
 	const navigate = useNavigate()
+	const { isAuthenticated } = useAuth()
 	return (
 		<section className='relative overflow-hidden min-h-screen flex items-center justify-center'>
 			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32'>
@@ -25,11 +27,13 @@ export default function BrowseHeader() {
 						</p>
 						<div className='flex flex-col sm:flex-row gap-4 justify-center lg:justify-start'>
 							<Button
-								onClick={() => navigate('/login')}
+								onClick={() =>
+									navigate(isAuthenticated ? '/dashboard' : '/login')
+								}
 								size='lg'
 								className='bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
 							>
-								Get Started
+								{isAuthenticated ? 'Go to Dashboard' : 'Get Started for Free'}
 							</Button>
 						</div>
 					</div>

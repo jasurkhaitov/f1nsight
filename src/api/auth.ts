@@ -17,11 +17,17 @@ export const loginRequest = async (
 
 	const data = await res.json()
 
-	if (!res.ok) {
-		throw new Error(data.message || 'Login failed')
+	if (!res.ok || !data.success) {
+		throw {
+			error: data.error || {
+				code: 'UNKNOWN_ERROR',
+				message: 'An error occurred during login',
+				details: null,
+			},
+		}
 	}
 
-	return data as LoginResponse
+	return data
 }
 
 export const registerRequest = async (
@@ -35,9 +41,15 @@ export const registerRequest = async (
 
 	const data = await res.json()
 
-	if (!res.ok) {
-		throw new Error(data.message || 'Registration failed')
+	if (!res.ok || !data.success) {
+		throw {
+			error: data.error || {
+				code: 'UNKNOWN_ERROR',
+				message: 'An error occurred during registration',
+				details: null,
+			},
+		}
 	}
 
-	return data as RegisterResponse
+	return data
 }
