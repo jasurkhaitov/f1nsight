@@ -107,7 +107,7 @@ export default function WeeklyReports() {
 				<h3 className='text-2xl font-semibold mb-2'>Weekly Report</h3>
 				<div className='flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm'>
 					<Calendar className='w-3.5 h-3.5' />
-					<span>{formatDate(data.startDate)}</span>
+					<span>{formatDate(data.startDate)} - {formatDate(data.endDate)}</span>
 				</div>
 			</div>
 

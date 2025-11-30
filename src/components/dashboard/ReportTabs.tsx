@@ -81,7 +81,6 @@ export default function ReportTabs() {
 
 				<TabsContent value='month' className='mt-2'>
 					<div className='p-6 rounded-lg border'>
-						<h3 className='text-lg font-semibold mb-2'>Monthly Report</h3>
 						<MonthlyReports />
 					</div>
 				</TabsContent>
