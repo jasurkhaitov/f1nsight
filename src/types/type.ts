@@ -56,7 +56,6 @@ export type UploadCheckResponse = {
 	timestamp: number
 }
 
-
 export interface UploadCheckPayload {
 	file: File
 }
@@ -71,4 +70,19 @@ export interface InsightResponse {
 	success: boolean
 	data: InsightData
 	timestamp: number
+}
+
+export interface DailyReportResponse {
+	success: boolean
+	data: DailyReportData
+	timestamp: number
+}
+
+export interface DailyReportData {
+	startDate: string
+	endDate: string
+	totalSpent: number
+	transactionCount: number
+	categoryTotals: Record<string, number>
+	comparisonPercentage: number | null
 }

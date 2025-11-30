@@ -5,11 +5,13 @@ import {
 	CalendarDays,
 	CalendarRange,
 	CalendarClock,
+	Columns3Cog,
 } from 'lucide-react'
 import YearlyReports from '../reports/YearlyReports'
 import MonthlyReports from '../reports/MonthlyReports'
 import WeeklyReports from '../reports/WeeklyReports'
 import DailyReports from '../reports/DailyReports'
+import CustomReports from '../reports/CustomReports'
 
 export default function ReportTabs() {
 	const [activeTab, setActiveTab] = useState(
@@ -24,10 +26,10 @@ export default function ReportTabs() {
 	return (
 		<div className='mt-5'>
 			<Tabs value={activeTab} onValueChange={handleChange}>
-				<TabsList className='grid w-full grid-cols-4 h-auto p-1'>
+				<TabsList className='grid w-full grid-cols-5 h-auto p-1'>
 					<TabsTrigger
 						value='day'
-						className='data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 py-3 px-4'
+						className='flex items-center gap-2 py-3 px-4'
 					>
 						<Calendar className='w-4 h-4' />
 						<span className='font-medium'>Daily</span>
@@ -35,7 +37,7 @@ export default function ReportTabs() {
 
 					<TabsTrigger
 						value='week'
-						className='data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 py-3 px-4'
+						className='flex items-center gap-2 py-3 px-4'
 					>
 						<CalendarDays className='w-4 h-4' />
 						<span className='font-medium'>Weekly</span>
@@ -43,7 +45,7 @@ export default function ReportTabs() {
 
 					<TabsTrigger
 						value='month'
-						className='data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 py-3 px-4'
+						className='flex items-center gap-2 py-3 px-4'
 					>
 						<CalendarRange className='w-4 h-4' />
 						<span className='font-medium'>Monthly</span>
@@ -51,23 +53,28 @@ export default function ReportTabs() {
 
 					<TabsTrigger
 						value='year'
-						className='data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 py-3 px-4'
+						className='flex items-center gap-2 py-3 px-4'
 					>
 						<CalendarClock className='w-4 h-4' />
 						<span className='font-medium'>Yearly</span>
+					</TabsTrigger>
+					<TabsTrigger
+						value='custom'
+						className='flex items-center gap-2 py-3 px-4'
+					>
+						<Columns3Cog className='w-4 h-4' />
+						<span className='font-medium'>Custom</span>
 					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value='day' className='mt-2'>
 					<div className='p-6 rounded-lg border'>
-						<h3 className='text-lg font-semibold mb-2'>Daily Report</h3>
 						<DailyReports />
 					</div>
 				</TabsContent>
 
 				<TabsContent value='week' className='mt-2'>
 					<div className='p-6 rounded-lg border'>
-						<h3 className='text-lg font-semibold mb-2'>Weekly Report</h3>
 						<WeeklyReports />
 					</div>
 				</TabsContent>
@@ -83,6 +90,12 @@ export default function ReportTabs() {
 					<div className='p-6 rounded-lg border'>
 						<h3 className='text-lg font-semibold mb-2'>Yearly Report</h3>
 						<YearlyReports />
+					</div>
+				</TabsContent>
+				<TabsContent value='custom' className='mt-2'>
+					<div className='p-6 rounded-lg border'>
+						<h3 className='text-lg font-semibold mb-2'>Custom</h3>
+						<CustomReports />
 					</div>
 				</TabsContent>
 			</Tabs>

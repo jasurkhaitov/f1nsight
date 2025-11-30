@@ -1,7 +1,7 @@
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '../ui/button'
 import { ModeToggle } from '@/shared/ThemeToggle'
-import { Bell, LogOut, SidebarOpenIcon, TimerIcon, TrendingUp, TrendingUpDown } from 'lucide-react'
+import { Bell, LogOut, SidebarOpenIcon, TrendingUp } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -99,8 +99,12 @@ export default function DashboardNavbar({
 								<>
 									<p>{notification.data.summary}</p>
 									<div className='flex pt-3 border-t items-center justify-between'>
-										<Badge variant={'destructive'}># {notification.data.topCategory}</Badge>
-										<p className='flex items-center gap-2'><TrendingUp/> {notification.data.trend}</p>
+										<Badge variant={'destructive'}>
+											# {notification.data.topCategory}
+										</Badge>
+										<p className='flex items-center gap-2'>
+											<TrendingUp /> {notification.data.trend}
+										</p>
 									</div>
 									<p className='text-sm text-muted-foreground flex items-center gap-3'>
 										{new Date(notification.timestamp).toLocaleString()}
@@ -114,11 +118,11 @@ export default function DashboardNavbar({
 						</PopoverContent>
 					</Popover>
 
+					<ModeToggle />
+
 					<Button onClick={handleLogout} variant={'outline'} size={'icon'}>
 						<LogOut />
 					</Button>
-
-					<ModeToggle />
 				</div>
 			</div>
 		</div>
