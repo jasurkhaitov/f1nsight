@@ -87,7 +87,6 @@ export default function ReportTabs() {
 
 				<TabsContent value='year' className='mt-2'>
 					<div className='p-6 rounded-lg border'>
-						<h3 className='text-lg font-semibold mb-2'>Yearly Report</h3>
 						<YearlyReports />
 					</div>
 				</TabsContent>
