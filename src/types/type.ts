@@ -72,13 +72,13 @@ export interface InsightResponse {
 	timestamp: number
 }
 
-export interface DailyReportResponse {
+export interface ReportResponse {
 	success: boolean
-	data: DailyReportData
+	data: ReportData
 	timestamp: number
 }
 
-export interface DailyReportData {
+export interface ReportData {
 	startDate: string
 	endDate: string
 	totalSpent: number

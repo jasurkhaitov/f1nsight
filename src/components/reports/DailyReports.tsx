@@ -8,12 +8,24 @@ import {
 	Loader,
 } from 'lucide-react'
 import { API_URL } from '@/api/url'
-import type { DailyReportData, DailyReportResponse } from '@/types/type'
+import type { ReportData, ReportResponse } from '@/types/type'
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 export default function DailyReports() {
-	const [data, setData] = useState<DailyReportData | null>(null)
+	const [data, setData] = useState<ReportData | null>(null)
 	const [loading, setLoading] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
+
+	const chartColors = [
+		'#3B82F6', // blue-500
+		'#A855F7', // purple-500
+		'#22C55E', // green-500
+		'#F97316', // orange-500
+		'#EC4899', // pink-500
+		'#6366F1', // indigo-500
+		'#EAB308', // yellow-500
+		'#EF4444', // red-500
+	]
 
 	useEffect(() => {
 		const fetchDailyReport = async () => {
@@ -30,7 +42,7 @@ export default function DailyReports() {
 					throw new Error('Failed to fetch daily report')
 				}
 
-				const json: DailyReportResponse = await res.json()
+				const json: ReportResponse = await res.json()
 				setData(json.data)
 			} catch (err) {
 				setError(String(err))
@@ -58,22 +70,6 @@ export default function DailyReports() {
 		})
 	}
 
-	const getCategoryColor = (index: number) => {
-		const colors = [
-			'bg-blue-500',
-			'bg-purple-500',
-			'bg-green-500',
-			'bg-orange-500',
-			'bg-pink-500',
-			'bg-indigo-500',
-			'bg-yellow-500',
-			'bg-red-500',
-		]
-		return colors[index % colors.length]
-	}
-
-	if (!data) return null
-
 	if (loading) {
 		return (
 			<div className='flex items-center justify-center min-h-[450px]'>
@@ -94,11 +90,17 @@ export default function DailyReports() {
 		)
 	}
 
+	if (!data) return null
 
 	const categoryEntries = Object.entries(data.categoryTotals).sort(
 		(a, b) => b[1] - a[1]
 	)
-	const maxCategoryAmount = Math.max(...Object.values(data.categoryTotals), 1)
+
+	const chartData = categoryEntries.map(([category, amount], index) => ({
+		name: category,
+		value: amount,
+		color: chartColors[index % chartColors.length],
+	}))
 
 	return (
 		<>
@@ -166,40 +168,56 @@ export default function DailyReports() {
 						<p className='text-gray-600'>No transactions yet</p>
 					</div>
 				) : (
-					<div className='space-y-4'>
-						{categoryEntries.map(([category, amount], index) => {
-							const percentage = (amount / data.totalSpent) * 100
-							const barWidth = (amount / maxCategoryAmount) * 100
+					<div className='flex items-center justify-between'>
+						<div className='w-full h-80 mb-6'>
+							<ResponsiveContainer width='100%' height='100%'>
+								<PieChart>
+									<Pie
+										data={chartData}
+										dataKey='value'
+										nameKey='name'
+										cx='50%'
+										cy='50%'
+										outerRadius={120}
+										label={({ name, percent }) =>
+											`${name}: ${(percent * 100).toFixed(1)}%`
+										}
+									>
+										{chartData.map((entry, index) => (
+											<Cell key={`cell-${index}`} fill={entry.color} />
+										))}
+									</Pie>
+									<Tooltip
+										formatter={(value: number) => formatCurrency(value)}
+									/>
+								</PieChart>
+							</ResponsiveContainer>
+						</div>
 
-							return (
-								<div key={category} className='group'>
-									<div className='flex items-center justify-between mb-2'>
-										<div className='flex items-center gap-3'>
-											<div
-												className={`w-3 h-3 rounded-full ${getCategoryColor(
-													index
-												)}`}
-											></div>
-											<span className='font-medium capitalize'>{category}</span>
-										</div>
-										<div className='flex items-center gap-4'>
-											<span className='text-sm'>{percentage.toFixed(1)}%</span>
-											<span className='font-semibold'>
-												{formatCurrency(amount)}
+						<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3'>
+							{categoryEntries.map(([category, amount], index) => {
+								const percentage = (amount / data.totalSpent) * 100
+								return (
+									<div key={category} className='flex items-center gap-2'>
+										<div
+											className='w-3 h-3 rounded-full shrink-0'
+											style={{
+												backgroundColor:
+													chartColors[index % chartColors.length],
+											}}
+										></div>
+										<div className='flex'>
+											<span className='font-medium capitalize text-sm'>
+												{category}
+											</span>
+											<span className='text-sm'>
+												{' '} {percentage.toFixed(1)}%
 											</span>
 										</div>
 									</div>
-									<div className='w-full rounded-full h-2 overflow-hidden'>
-										<div
-											className={`h-full ${getCategoryColor(
-												index
-											)} transition-all duration-500 ease-out`}
-											style={{ width: `${barWidth}%` }}
-										></div>
-									</div>
-								</div>
-							)
-						})}
+								)
+							})}
+						</div>
 					</div>
 				)}
 			</div>
