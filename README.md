@@ -27,7 +27,7 @@
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/f1nsight.git
+git clone https://github.com/jasurkhaitov/f1nsight.git
 
 # Go to project folder
 cd f1nsight
