@@ -47,9 +47,3 @@ npm run dev
 2. Add your expenses and categorize them.
 3. Explore AI insights and personalized recommendations.
 4. Track goals and visualize trends through interactive charts.
-
----
-
-## 📸 Preview
-
-*Add screenshots or demo GIFs here (optional).*
